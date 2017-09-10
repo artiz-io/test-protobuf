@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-service Artiz_Markets {
+service ArtizMarkets {
     rpc PlaceBuyOrder(PlaceBuyOrderRequest) returns (PlaceBuyOrderResponse) {}
 }
 
@@ -21,4 +21,5 @@ message PlaceBuyOrderRequest {
 message PlaceBuyOrderResponse {
     BuyOrder buy_order = 1;
     string timestamp = 2;
+    string status = 3;
 }

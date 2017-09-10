@@ -4,6 +4,12 @@
 const protobuf = require('protobufjs')
 const uuid = require('uuid')
 
+const root = protobuf.loadSync('./artiz_message.proto')
+const markets = root.lookupEnum('Market').values
+const ArtizMarkets = root.lookup('ArtizMarkets')
+const PlaceBuyOrderRequest = root.lookup('PlaceBuyOrderRequest')
+const PlaceBuyOrderResponse = root.lookup('PlaceBuyOrderResponse')
+
 /**
  * Handler for placing a buy order on the markets service
  * @param method
@@ -12,25 +18,38 @@ const uuid = require('uuid')
  * @returns {*}
  */
 function placeBuyOrderHandler (method, requestData, callback) {
-	// TODO: call service to execute
-	const responseData = requestData
-	return callback(null, responseData)
+	performRequestOverTransportChannel(requestData, (err, responseData) => {
+		if (err) return callback(err)
+		return callback(null, responseData)
+	})
 }
 
-protobuf.load('./artiz_message.proto', (err, root) => {
-	if (err) throw err
+function performRequestOverTransportChannel (requestData, callback) {
 	
-	const markets = root.lookupEnum('Market').values
+	const request = PlaceBuyOrderRequest.decodeDelimited(requestData)
 	
-	const ArtizMarkets = root.lookup('Artiz_Markets')
-	const artizMarkets = ArtizMarkets.create(placeBuyOrderHandler, false, false)
+	const response = {
+		buyOrder: request.buyOrder,
+		timestamp: new Date().toISOString(),
+		status: 'queued'
+	}
 	
-	artizMarkets.placeBuyOrder({
-		buyOrder: {
-			uuid: uuid.v4(),
-			market: markets.BTC_ETH
-		}
-	}).then(response => {
-		console.log('buy_order', response)
-	}).catch(console.error)
-})
+	const responseData = PlaceBuyOrderResponse.encodeDelimited(response).finish()
+	
+	setTimeout(() => {
+		callback(null, responseData)
+	}, 500)
+	
+}
+
+const artizMarkets = ArtizMarkets.create(placeBuyOrderHandler, true, true)
+
+artizMarkets.placeBuyOrder({
+	buyOrder: {
+		uuid: uuid.v4(),
+		market: markets.BTC_ETH,
+		derp: 'test'
+	}
+}).then(response => {
+	console.log('place_buy_order', response)
+}).catch(console.error)
