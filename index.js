@@ -5,7 +5,7 @@ const protobuf = require('protobufjs')
 const uuid = require('uuid')
 
 const root = protobuf.loadSync('./artiz_message.proto')
-const markets = root.lookupEnum('Market').values
+const markets = root.lookupEnum('Market')
 const ArtizMarkets = root.lookup('ArtizMarkets')
 const PlaceBuyOrderRequest = root.lookup('PlaceBuyOrderRequest')
 const PlaceBuyOrderResponse = root.lookup('PlaceBuyOrderResponse')
@@ -42,13 +42,10 @@ function performRequestOverTransportChannel (requestData, callback) {
 	
 }
 
-const artizMarkets = ArtizMarkets.create(placeBuyOrderHandler, true, true)
-
-artizMarkets.placeBuyOrder({
+ArtizMarkets.create(placeBuyOrderHandler, true, true).placeBuyOrder({
 	buyOrder: {
 		uuid: uuid.v4(),
-		market: markets.BTC_ETH,
-		derp: 'test'
+		market: markets.valuesById[0]
 	}
 }).then(response => {
 	console.log('place_buy_order', response)
