@@ -45,7 +45,7 @@ function performRequestOverTransportChannel (requestData, callback) {
 ArtizMarkets.create(placeBuyOrderHandler, true, true).placeBuyOrder({
 	buyOrder: {
 		uuid: uuid.v4(),
-		market: markets.valuesById[0]
+		market: markets.values.BTC_ETH
 	}
 }).then(response => {
 	console.log('place_buy_order', response)
