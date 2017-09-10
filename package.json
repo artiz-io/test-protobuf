@@ -1,0 +1,12 @@
+{
+  "name": "nodejs-protobuf",
+  "version": "1.0.0",
+  "description": "Demo showing usage of protobuf in nodejs",
+  "main": "index.js",
+  "author": "Chris ter Beke <ctbeke@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "protobufjs": "^6.8.0",
+    "uuid": "^3.1.0"
+  }
+}

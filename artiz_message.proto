@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+service Artiz_Markets {
+    rpc PlaceBuyOrder(PlaceBuyOrderRequest) returns (PlaceBuyOrderResponse) {}
+}
+
+enum Market {
+    BTC_ETH = 0;
+    BTC_ART = 1;
+}
+
+message BuyOrder {
+    string uuid = 1;
+    Market market = 2;
+}
+
+message PlaceBuyOrderRequest {
+    BuyOrder buy_order = 1;
+}
+
+message PlaceBuyOrderResponse {
+    BuyOrder buy_order = 1;
+    string timestamp = 2;
+}
