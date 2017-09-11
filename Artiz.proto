@@ -1,0 +1,20 @@
+syntax = "proto3";
+package Artiz;
+
+enum Market {
+    BTC_ETH = 0;
+    BTC_ART = 1;
+}
+
+enum OrderStatus {
+    QUEUED = 0;
+    FULFILLED = 1;
+    TIMEDOUT = 2;
+}
+
+message BuyOrder {
+    required string uuid = 1;
+    required Market market = 2;
+    optional string timestamp = 3;
+    optional OrderStatus status = 4;
+}

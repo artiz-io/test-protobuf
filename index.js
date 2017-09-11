@@ -3,50 +3,37 @@
 // packages
 const protobuf = require('protobufjs')
 const uuid = require('uuid')
+const Message = require('./message')
 
-const root = protobuf.loadSync('./artiz_message.proto')
-const markets = root.lookupEnum('Market')
-const ArtizMarkets = root.lookup('ArtizMarkets')
-const PlaceBuyOrderRequest = root.lookup('PlaceBuyOrderRequest')
-const PlaceBuyOrderResponse = root.lookup('PlaceBuyOrderResponse')
+const root = protobuf.loadSync('./Artiz.proto')
 
-/**
- * Handler for placing a buy order on the markets service
- * @param method
- * @param requestData
- * @param callback
- * @returns {*}
- */
-function placeBuyOrderHandler (method, requestData, callback) {
-	performRequestOverTransportChannel(requestData, (err, responseData) => {
-		if (err) return callback(err)
-		return callback(null, responseData)
-	})
-}
+// types
+const BuyOrder = root.lookupType('Artiz.BuyOrder')
+const MARKETS = root.lookupEnum('Artiz.Market')
 
-function performRequestOverTransportChannel (requestData, callback) {
-	
-	const request = PlaceBuyOrderRequest.decodeDelimited(requestData)
-	
-	const response = {
-		buyOrder: request.buyOrder,
-		timestamp: new Date().toISOString(),
-		status: 'queued'
-	}
-	
-	const responseData = PlaceBuyOrderResponse.encodeDelimited(response).finish()
-	
-	setTimeout(() => {
-		callback(null, responseData)
-	}, 500)
-	
-}
+// test
+placeBuyOrder()
 
-ArtizMarkets.create(placeBuyOrderHandler, true, true).placeBuyOrder({
-	buyOrder: {
+function placeBuyOrder () {
+	
+	const buyOrderPayload = {
 		uuid: uuid.v4(),
-		market: markets.values.BTC_ETH
+		market: MARKETS.values.BTC_ETH
 	}
-}).then(response => {
-	console.log('place_buy_order', response)
-}).catch(console.error)
+	
+	const message = new Message(BuyOrder, buyOrderPayload)
+	
+	try {
+		message.generate()
+	} catch (e) {
+		console.error(e)
+	}
+	
+	console.log('buffer', message.getBuffer())
+	console.log('payload', message.getOriginalPayload())
+	console.log('type', message.getType())
+	console.log('valid', message.isValid())
+	console.log('message', message.getMessage())
+	
+	// TODO: send
+}
