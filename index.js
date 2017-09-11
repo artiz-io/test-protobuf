@@ -16,24 +16,18 @@ placeBuyOrder()
 
 function placeBuyOrder () {
 	
-	const buyOrderPayload = {
+	const message = new Message(BuyOrder, {
 		uuid: uuid.v4(),
 		market: MARKETS.values.BTC_ETH
-	}
+	})
 	
-	const message = new Message(BuyOrder, buyOrderPayload)
+	console.log('buffer', message.generate())
 	
-	try {
-		message.generate()
-	} catch (e) {
-		console.error(e)
-	}
-	
-	console.log('buffer', message.getBuffer())
-	console.log('payload', message.getOriginalPayload())
-	console.log('type', message.getType())
-	console.log('valid', message.isValid())
-	console.log('message', message.getMessage())
+	// console.log('buffer', message.getBuffer())
+	// console.log('payload', message.getOriginalPayload())
+	// console.log('type', message.getType())
+	// console.log('valid', message.isValid())
+	// console.log('message', message.getMessage())
 	
 	// TODO: send
 }
